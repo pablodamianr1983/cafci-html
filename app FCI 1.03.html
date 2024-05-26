@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rendimiento Diario del Fondo</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #222; /* Fondo oscuro */
+      color: #f0f0f0; /* Texto claro */
+      display: flex;
+      min-height: 100vh;
+    }
+
+    #container {
+      flex: 1;
+      background-color: #333; /* Fondo del contenedor más oscuro */
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Sombra más oscura */
+      padding: 20px;
+    }
+
+    #sidebar {
+      width: 300px;
+      background-color: #282828; /* Fondo de la barra lateral ligeramente distinto */
+      padding: 20px;
+      border-right: 1px solid #555; /* Borde oscuro */
+    }
+
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #555; /* Borde oscuro */
+      border-radius: 4px;
+      box-sizing: border-box;
+      background-color: #444; /* Fondo de inputs y botones */
+      color: #f0f0f0; /* Texto claro */
+    }
+
+    button {
+      background-color: #005a9e; /* Azul más oscuro */
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #004477; /* Azul aún más oscuro */
+    }
+
+    #resultado1, #resultado2, #resultado3, etc. {
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid #555; /* Borde oscuro */
+      border-radius: 4px;
+      background-color: #282828; /* Fondo de resultados */
+    }
+
+    #favoritosList {
+      list-style: none;
+      padding: 0;
+      margin-top: 10px;
+    }
+
+    #favoritosList li {
+      margin-bottom: 5px;
+    }
+  </style>
+  <script>
+    let numConsultas = 1;
+    let consultasFavoritas = JSON.parse(localStorage.getItem("consultasFavoritas")) || [];
+
+    async function obtenerRendimiento(consultaId) {
+      const fondo = document.getElementById(`fondo${consultaId}`).value;
+      const clase = document.getElementById(`clase${consultaId}`).value;
+      const nombreFondo = document.getElementById(`nombreFondo${consultaId}`).value;
+      const montoInvertido = parseFloat(document.getElementById(`monto${consultaId}`).value);
+      const url = `https://api.cafci.org.ar/fondo/${fondo}/clase/${clase}/ficha`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const rendimiento = data.data.info.diaria.rendimientos.day.rendimiento;
+        const gananciaDiaria = (rendimiento / 100) * montoInvertido;
+
+        document.getElementById(`resultado${consultaId}`).textContent =
+          `Fondo: ${nombreFondo}, Rendimiento diario: ${rendimiento}%, Ganancia diaria: ${gananciaDiaria.toFixed(2)}`;
+      } catch (error) {
+        document.getElementById(`resultado${consultaId}`).textContent = "Error al obtener datos";
+        console.error(error);
+      }
+    }
+
+    function agregarConsulta() {
+      numConsultas++;
+      const nuevaConsulta = `
+        <div id="consulta${numConsultas}">
+          <label for="nombreFondo${numConsultas}">Nombre del Fondo:</label>
+          <input type="text" id="nombreFondo${numConsultas}" name="nombreFondo${numConsultas}"><br><br>
+
+          <label for="fondo${numConsultas}">Número de Fondo:</label>
+          <input type="number" id="fondo${numConsultas}" name="fondo${numConsultas}"><br><br>
+
+          <label for="clase${numConsultas}">Número de Clase:</label>
+          <input type="number" id="clase${numConsultas}" name="clase${numConsultas}"><br><br>
+
+          <label for="monto${numConsultas}">Monto invertido:</label>
+          <input type="number" id="monto${numConsultas}" name="monto${numConsultas}"><br><br>
+
+          <button onclick="obtenerRendimiento(${numConsultas})">Obtener Rendimiento</button>
+          <button onclick="guardarConsulta(${numConsultas})">Guardar como Favorita</button>
+          <div id="resultado${numConsultas}"></div><br>
+        </div>
+      `;
+
+      document.getElementById("consultasContainer").insertAdjacentHTML('beforeend', nuevaConsulta);
+    }
+
+    function guardarConsulta(consultaId) {
+      const consulta = {
+        nombreFondo: document.getElementById(`nombreFondo${consultaId}`).value,
+        fondo: document.getElementById(`fondo${consultaId}`).value,
+        clase: document.getElementById(`clase${consultaId}`).value,
+        monto: document.getElementById(`monto${consultaId}`).value,
+      };
+      consultasFavoritas.push(consulta);
+      localStorage.setItem("consultasFavoritas", JSON.stringify(consultasFavoritas));
+      actualizarListaFavoritos(); 
+      alert("Consulta guardada como favorita");
+    }
+
+    function cargarConsultasFavoritas() {
+      document.getElementById("consultasContainer").innerHTML = ""; 
+      numConsultas = 1; 
+      consultasFavoritas.forEach(consulta => {
+        agregarConsulta();
+        document.getElementById(`nombreFondo${numConsultas}`).value = consulta.nombreFondo;
+        document.getElementById(`fondo${numConsultas}`).value = consulta.fondo;
+        document.getElementById(`clase${numConsultas}`).value = consulta.clase;
+        document.getElementById(`monto${numConsultas}`).value = consulta.monto;
+      });
+    }
+
+    function borrarFavoritos() {
+      if (confirm("¿Estás seguro de que quieres borrar todas las consultas favoritas?")) {
+        consultasFavoritas = [];
+        localStorage.removeItem("consultasFavoritas");
+        document.getElementById("consultasContainer").innerHTML = ""; 
+        numConsultas = 1; 
+        agregarConsulta(); 
+        actualizarListaFavoritos(); 
+        alert("Consultas favoritas borradas");
+      }
+    }
+
+    function guardarResultados() {
+      let resultados = "Resultados de las consultas:\n\n";
+
+      for (let i = 1; i <= numConsultas; i++) {
+        const resultadoDiv = document.getElementById(`resultado${i}`);
+        if (resultadoDiv) {
+          const resultadoText = resultadoDiv.textContent;
+          if (resultadoText && !resultadoText.startsWith("Error")) {
+            resultados += resultadoText + "\n\n"; 
+          }
+        }
+      }
+
+      const blob = new Blob([resultados], { type: "text/plain" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "rendimientos.txt";
+      a.click();
+    }
+
+
+    function actualizarListaFavoritos() {
+      const favoritosList = document.getElementById("favoritosList");
+      favoritosList.innerHTML = ""; 
+
+      consultasFavoritas.forEach((consulta, index) => {
+        const listItem = document.createElement("li");
+        listItem.textContent = `${consulta.nombreFondo} - Fondo: ${consulta.fondo}, Clase: ${consulta.clase}, Monto: ${consulta.monto}`;
+        favoritosList.appendChild(listItem);
+      });
+    }
+
+    window.onload = () => {
+      agregarConsulta();
+      actualizarListaFavoritos(); 
+    };
+  </script>
+</head>
+<body>
+  <div id="sidebar">
+    <h2>Consultas Favoritas</h2>
+    <button onclick="cargarConsultasFavoritas()">Cargar Favoritas</button>
+    <button onclick="borrarFavoritos()">Borrar Favoritos</button>
+    <ul id="favoritosList"></ul>
+  </div>
+
+  <div id="container">
+    <h1>Consulta Rendimiento Diario</h1>
+    <div id="consultasContainer"></div>
+    <button onclick="agregarConsulta()">Agregar Consulta</button>
+    <button onclick="guardarResultados()">Guardar Resultados</button>
+  </div>
+</body>
+</html>
