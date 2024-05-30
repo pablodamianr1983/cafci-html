@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rendimiento Diario del Fondo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="header">
+        <button id="themeToggle">Cambiar Tema</button>
+    </div>
+    <div id="sidebar"> 
+        <h2>Consultas Favoritas</h2>
+        <button onclick="cargarConsultasFavoritas()">Cargar Favoritas</button>
+        <button onclick="borrarFavoritos()">Borrar Favoritas</button>
+        <ul id="favoritosList"></ul>
+        <h1 id="totalRendimientos"></h1>
+    </div>
+
+    <div id="container"> 
+        <h1>Consulta Rendimiento Diario</h1>
+        <div id="consultasContainer"></div> 
+        <button onclick="agregarConsulta()">Agregar Consulta</button>
+        <button onclick="guardarResultados()">Guardar Resultados</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

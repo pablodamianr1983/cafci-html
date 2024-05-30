@@ -1,0 +1,115 @@
+/* Estilos base para elementos comunes */
+:root {
+    --bg-color: #f0f0f0; /* Fondo claro por defecto */
+    --text-color: #34b7eb;   /* Texto oscuro por defecto */
+    --border-color: #ddd; /* Borde claro por defecto */
+    --button-bg: #005a9e; /* Color de fondo del botón por defecto */
+    --button-hover: #004477; /* Color de fondo del botón al pasar el mouse por defecto */
+}
+
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color); 
+    color: var(--text-color); 
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Contenedor principal de la aplicación */
+#container {
+    flex: 1; /* Ocupa el espacio disponible */
+    background-color: var(--bg-color); 
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+}
+
+/* Barra lateral para consultas favoritas */
+#sidebar {
+    width: 300px;
+    background-color: var(--bg-color); 
+    padding: 20px;
+    border-right: 1px solid var(--border-color); 
+}
+
+/* Encabezados */
+h1, h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Etiquetas de los campos de entrada */
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Campos de entrada y botones */
+input, button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border-color); 
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: var(--bg-color); 
+    color: var(--text-color); 
+}
+
+/* Botones en general */
+button {
+    background-color: var(--button-bg); 
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: var(--button-hover); 
+}
+
+/* Resultados de las consultas */
+#resultado1, #resultado2, #resultado3 {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid var(--border-color); 
+    border-radius: 4px;
+    background-color: var(--bg-color); 
+}
+
+/* Lista de consultas favoritas */
+#favoritosList {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+}
+
+#favoritosList li {
+    margin-bottom: 5px;
+}
+
+/* Total de rendimientos */
+#totalRendimientos {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 2em;
+    font-weight: bold;
+}
+
+/* Tema oscuro */
+body.dark-mode {
+    --bg-color: #222;   /* Fondo oscuro */
+    --text-color: #f0f0f0; /* Texto claro */
+    --border-color: #555; /* Borde oscuro */
+    --button-bg: #004477; /* Color de fondo del botón en tema oscuro */
+    --button-hover: #003355; /* Color de fondo del botón al pasar el mouse en tema oscuro */
+}
+
+
+/* Estilo específico para el botón de cambio de tema */
+#themeToggle {
+    padding: 5px 10px;  /* Reducir el tamaño del botón */
+    background-color: #597199; 
+    color: white; 
+    border: none; 
+    border-radius: 5px; 
+    cursor: pointer; 
+}
